@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .form-header {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+        .score-preview {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        .score-excellent { background-color: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .score-good { background-color: #d1ecf1; color: #0c5460; border: 2px solid #bee5eb; }
+        .score-average { background-color: #fff3cd; color: #856404; border: 2px solid #ffeaa7; }
+        .score-poor { background-color: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+        .character-count {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <!-- Form Header -->
+            <div class="form-header">
+                <h2 class="text-primary mb-2" id="formTitle">
+                    <i class="bi bi-clipboard-plus"></i> Add New Evaluation
+                </h2>
+                <p class="text-muted mb-0">Complete the evaluation form below</p>
+            </div>
+
+            <!-- Evaluation Form -->
+            <form id="evaluationForm" novalidate>
+                <!-- Hidden ID field for updates -->
+                <input type="hidden" id="evaluationId">
+
+                <!-- Student Selection -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="student" class="form-label required-field">Student</label>
+                        <select class="form-select" id="student" name="student" required>
+                            <option value="">Select a student...</option>
+                            <!-- Student options will be populated dynamically -->
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a student.
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="mentor" class="form-label required-field">Mentor</label>
+                        <select class="form-select" id="mentor" name="mentor" required>
+                            <option value="">Select a mentor...</option>
+                            <!-- Mentor options will be populated dynamically -->
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a mentor.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score Section -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="score" class="form-label required-field">Evaluation Score</label>
+                        <input type="range" 
+                               class="form-range" 
+                               id="score" 
+                               name="score"
+                               min="0" 
+                               max="100" 
+                               step="1"
+                               value="0"
+                               required>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">0</small>
+                            <small class="text-muted">25</small>
+                            <small class="text-muted">50</small>
+                            <small class="text-muted">75</small>
+                            <small class="text-muted">100</small>
+                        </div>
+                        <div class="invalid-feedback">
+                            Please set an evaluation score.
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Score Preview</label>
+                        <div class="score-preview" id="scorePreview">
+                            0/100
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score Indicators -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between text-center">
+                            <div class="flex-fill mx-1">
+                                <div class="p-2 rounded score-poor">
+                                    <small>0-59</small>
+                                    <br>
+                                    <strong>Poor</strong>
+                                </div>
+                            </div>
+                            <div class="flex-fill mx-1">
+                                <div class="p-2 rounded score-average">
+                                    <small>60-74</small>
+                                    <br>
+                                    <strong>Average</strong>
+                                </div>
+                            </div>
+                            <div class="flex-fill mx-1">
+                                <div class="p-2 rounded score-good">
+                                    <small>75-89</small>
+                                    <br>
+                                    <strong>Good</strong>
+                                </div>
+                            </div>
+                            <div class="flex-fill mx-1">
+                                <div class="p-2 rounded score-excellent">
+                                    <small>90-100</small>
+                                    <br>
+                                    <strong>Excellent</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remarks Section -->
+                <div class="mb-4">
+                    <label for="remarks" class="form-label">Remarks & Feedback</label>
+                    <textarea class="form-control" 
+                              id="remarks" 
+                              name="remarks"
+                              rows="5" 
+                              placeholder="Enter detailed feedback, strengths, areas for improvement, and overall comments..."
+                              maxlength="1000"></textarea>
+                    <div class="character-count mt-1">
+                        <span id="charCount">0</span>/1000 characters
+                    </div>
+                    <div class="form-text">
+                        Provide constructive feedback to help the student improve.
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" class="btn btn-secondary me-md-2" id="cancelBtn">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="bi bi-check-circle"></i> Save Evaluation
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div class="text-center mt-3">
+                    <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Success/Error Messages -->
+            <div class="alert alert-success d-none mt-3" id="successAlert">
+                <i class="bi bi-check-circle-fill"></i>
+                <span id="successMessage">Evaluation saved successfully!</span>
+            </div>
+            <div class="alert alert-danger d-none mt-3" id="errorAlert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span id="errorMessage">An error occurred while saving the evaluation.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            let students = [];
+            let mentors = [];
+
+            // Get URL parameters for edit mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const evaluationId = urlParams.get('id');
+
+            // Load initial data
+            loadStudents();
+            loadMentors();
+
+            // If evaluationId is present, load evaluation data for editing
+            if (evaluationId) {
+                loadEvaluationForEdit(evaluationId);
+            }
+
+            // Event Listeners
+            $('#evaluationForm').on('submit', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    saveEvaluation();
+                }
+            });
+
+            $('#cancelBtn').click(function() {
+                if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+                    window.location.href = 'evaluation.html';
+                }
+            });
+
+            $('#score').on('input', function() {
+                updateScorePreview($(this).val());
+            });
+
+            $('#remarks').on('input', function() {
+                updateCharacterCount($(this).val().length);
+            });
+
+            // Load students
+            function loadStudents() {
+                $.ajax({
+                    url: '/api/students',
+                    type: 'GET',
+                    success: function(data) {
+                        students = data;
+                        populateStudentSelect(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading students:', error);
+                        showError('Failed to load students. Please try again.');
+                    }
+                });
+            }
+
+            // Load mentors (you'll need to create this endpoint)
+            function loadMentors() {
+                $.ajax({
+                    url: '/api/mentors',
+                    type: 'GET',
+                    success: function(data) {
+                        mentors = data;
+                        populateMentorSelect(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading mentors:', error);
+                        showError('Failed to load mentors. Please try again.');
+                    }
+                });
+            }
+
+            // Load evaluation for editing
+            function loadEvaluationForEdit(evaluationId) {
+                showLoading(true);
+                
+                $.ajax({
+                    url: `/api/evaluations/${evaluationId}`,
+                    type: 'GET',
+                    success: function(evaluation) {
+                        $('#evaluationId').val(evaluation.id);
+                        $('#student').val(evaluation.student?.id);
+                        $('#mentor').val(evaluation.mentor?.id);
+                        $('#score').val(evaluation.score);
+                        $('#remarks').val(evaluation.remarks);
+                        
+                        updateScorePreview(evaluation.score);
+                        updateCharacterCount(evaluation.remarks?.length || 0);
+                        
+                        $('#formTitle').html('<i class="bi bi-clipboard-check"></i> Edit Evaluation');
+                        showLoading(false);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading evaluation:', error);
+                        showError('Failed to load evaluation data. Please try again.');
+                        showLoading(false);
+                    }
+                });
+            }
+
+            // Save evaluation
+            function saveEvaluation() {
+                const evaluationData = {
+                    id: $('#evaluationId').val() || null,
+                    student: { id: parseInt($('#student').val()) },
+                    mentor: { id: parseInt($('#mentor').val()) },
+                    score: parseInt($('#score').val()),
+                    remarks: $('#remarks').val()
+                };
+
+                const url = evaluationData.id ? `/api/evaluations/${evaluationData.id}` : '/api/evaluations';
+                const method = evaluationData.id ? 'PUT' : 'POST';
+
+                showLoading(true);
+                hideAlerts();
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    contentType: 'application/json',
+                    data: JSON.stringify(evaluationData),
+                    success: function(response) {
+                        showLoading(false);
+                        showSuccess('Evaluation saved successfully!');
+                        
+                        // Redirect after success
+                        setTimeout(() => {
+                            window.location.href = 'evaluation.html';
+                        }, 1500);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error saving evaluation:', error);
+                        showLoading(false);
+                        showError('Failed to save evaluation. Please try again.');
+                    }
+                });
+            }
+
+            // Populate student select
+            function populateStudentSelect(students) {
+                const studentSelect = $('#student');
+                students.forEach(student => {
+                    studentSelect.append(
+                        `<option value="${student.id}">${student.name} - ${student.email}</option>`
+                    );
+                });
+            }
+
+            // Populate mentor select
+            function populateMentorSelect(mentors) {
+                const mentorSelect = $('#mentor');
+                mentors.forEach(mentor => {
+                    mentorSelect.append(
+                        `<option value="${mentor.id}">${mentor.name}</option>`
+                    );
+                });
+            }
+
+            // Update score preview
+            function updateScorePreview(score) {
+                const preview = $('#scorePreview');
+                preview.text(`${score}/100`);
+                
+                // Update preview style based on score
+                preview.removeClass('score-excellent score-good score-average score-poor');
+                
+                if (score >= 90) preview.addClass('score-excellent');
+                else if (score >= 75) preview.addClass('score-good');
+                else if (score >= 60) preview.addClass('score-average');
+                else preview.addClass('score-poor');
+            }
+
+            // Update character count
+            function updateCharacterCount(count) {
+                $('#charCount').text(count);
+            }
+
+            // Validate form
+            function validateForm() {
+                let isValid = true;
+                
+                // Validate required fields
+                $('#evaluationForm select[required], #evaluationForm input[required]').each(function() {
+                    if (!$(this).val()) {
+                        $(this).addClass('is-invalid');
+                        isValid = false;
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+
+                // Validate score range
+                const score = parseInt($('#score').val());
+                if (score < 0 || score > 100) {
+                    $('#score').addClass('is-invalid');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // Utility functions
+            function showLoading(show) {
+                if (show) {
+                    $('#loadingSpinner').removeClass('d-none');
+                    $('#submitBtn').prop('disabled', true);
+                    $('#cancelBtn').prop('disabled', true);
+                } else {
+                    $('#loadingSpinner').addClass('d-none');
+                    $('#submitBtn').prop('disabled', false);
+                    $('#cancelBtn').prop('disabled', false);
+                }
+            }
+
+            function showSuccess(message) {
+                $('#successMessage').text(message);
+                $('#successAlert').removeClass('d-none');
+                $('#errorAlert').addClass('d-none');
+            }
+
+            function showError(message) {
+                $('#errorMessage').text(message);
+                $('#errorAlert').removeClass('d-none');
+                $('#successAlert').addClass('d-none');
+            }
+
+            function hideAlerts() {
+                $('#successAlert').addClass('d-none');
+                $('#errorAlert').addClass('d-none');
+            }
+        });
+    </script>
+</body>
+</html>
